@@ -1,0 +1,176 @@
+# dsh-vts-avatar local configuration.
+# Paths are resolved relative to this file.
+
+[vts]
+host = "127.0.0.1"
+port = 8002
+plugin_name = "dsh VTS Avatar"
+plugin_developer = "dsh"
+token_path = "data/vts_token.json"
+contract_path = "data/contract.json"
+# One file per model: data/profiles/<modelID>.json. Never overwritten by
+# another model's probe or tuning.
+profile_dir = "data/profiles"
+# Set to true only if another VTS plugin already owns a parameter you need.
+allow_add_fallback = false
+
+[tts]
+# Download a voice with:
+#   .venv\Scripts\python.exe -m piper.download_voices --download-dir models zh_CN-huayan-medium
+voice_model = "models/feiyu_distill_v8_final.onnx"
+voice_config = "models/feiyu_distill_v8_final.onnx.json"
+language = "zh"
+length_scale = 1.20
+sentence_silence = 0.08
+postprocess = true
+# ffmpeg for post-processing (leave empty if you do not need it)
+ffmpeg_path = ""
+noise_scale = 0.50
+noise_w_scale = 0.70
+# Distill wrapper is intentionally disabled: v8 is used as the native Piper
+# voice so no atempo stretching is applied.
+# distill_model = "models/feiyu_distill_v7.onnx"
+# distill_voice_config = "models/feiyu_distill_v7.onnx.json"
+# distill_length_scale = 1.20
+
+[audio]
+# "default" (or omitting `device`) follows the Windows default output; this is
+# what we use now. A hard-coded integer can silently point at a VB-Cable input
+# or a disconnected jack, and indices drift whenever the headset is re-plugged.
+# 2026-11-07: switched to the system default at the user's request.
+device = "default"
+sample_rate = 48000
+buffer_ms = 140
+# 0 means "use the audio backend's measured latency". Do not use a manual
+# offset to hide a change in output device or pipeline.
+av_offset_ms = 0
+auto_calibrate = true
+calibration_volume = 0.10
+sync_correction_ms = 0.0
+# Set false to run the VTS performance without audible playback (useful for probing).
+enabled = true
+
+[rvc]
+# Optional Feiyu RVC timbre conversion. Piper remains the timing master.
+enabled = false
+base_url = "http://127.0.0.1:9880"
+api_key_file = ""
+voice = "feiyu"
+cache_dir = "data/rvc_cache"
+timeout_s = 300
+
+[avatar]
+persona_name = "dsh"
+expressiveness = 0.65
+head_gain = 2.5
+# Head motion: minjerk (minimum-jerk keyframes + light low-pass) or spring.
+head_motion = "minjerk"
+# 0 disables the speed ceiling; the easing curve itself defines the motion.
+head_max_speed = 0.0
+head_spring_hz = 1.9
+head_spring_zeta = 1.0
+mouth_gain = 1.0
+gesture_rate = 0.4
+# Idle liveliness: 0 = quiet, 1 = lively.
+# User answer 2026-11-06: 有存在感 / 更活泼 一半一半.
+idle_energy = 0.55
+# Expression strength mix: natural 70% / exaggerated 30% (user answer).
+exaggeration_share = 0.30
+# L2 mood baseline under the transient affect: 0 = off (old behavior).
+# 0.2-0.4 lets a lingering mood keep a faint presence on the face.
+baseline_weight = 0.40
+exaggeration_gain = 1.30
+blink_per_min = 14.0
+# auto | vowel | continuous | hybrid
+mouth_backend = "auto"
+# VTS tracking-parameter names, not Live2D Param* names.
+mouth_open = "MouthOpen"
+mouth_smile = "MouthSmile"
+# VBridger-style continuous inputs; optional, filtered by the contract probe.
+jaw_open = "JawOpen"
+mouth_funnel = "MouthFunnel"
+mouth_pucker = "MouthPucker"
+mouth_press = "MouthPressLipOpen"
+mouth_shrug = "MouthShrug"
+mouth_x = "MouthX"
+# VTS auto-lip-sync "silence" gate: 0 while speaking, 1 during pauses.
+voice_silence = "VoiceSilence"
+# Sad / concerned inner brows, optional; filtered by the model profile.
+brow_inner = "BrowInnerUp"
+eye_left = "EyeOpenLeft"
+eye_right = "EyeOpenRight"
+head_x = "FaceAngleX"
+head_y = "FaceAngleY"
+head_z = "FaceAngleZ"
+body_x = "DSHBodyX"
+body_y = "DSHBodyY"
+body_z = "DSHBodyZ"
+voice_a = "VoiceA"
+voice_i = "VoiceI"
+voice_u = "VoiceU"
+voice_e = "VoiceE"
+voice_o = "VoiceO"
+
+[emotion]
+# legacy = presets + priority + keyword fallback (v0.5.0 behavior, default)
+# affect = multi-source evidence fusion (emotion refactor Phase 1+)
+# Keep "legacy" until the affect path passes its own acceptance tests.
+mode = "affect"
+
+[ndi]
+# Empty = first source whose name contains "VTube" (case-insensitive).
+source = ""
+snapshot_dir = "data/ndi"
+snapshot_interval_ms = 500
+
+[bridge]
+host = "127.0.0.1"
+port = 8765
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[llm]
+# Local Ollama model for the private speech path. The avatar's reply is
+# generated locally and spoken directly; the text never leaves this machine.
+enabled = true
+endpoint = "http://127.0.0.1:11434"
+backend = "ollama"
+api_key = ""
+model = "huihui_ai/qwen3-abliterated:8b"
+timeout_s = 180
+history_turns = 8
+persona = "你是飞羽，一个住在电脑里的女孩，和他很亲近。说话口语、有情绪，不解释自己是 AI，也不说教。回复要短，两三句就够，别长篇大论。"
+director_enabled = false
+director_model = "qwen3:8b"
+director_timeout_s = 8
+
+
+
+
+
+
+
+
+

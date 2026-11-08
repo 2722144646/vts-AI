@@ -1,0 +1,18 @@
+{
+  "name": "dsh-vts-avatar-standalone",
+  "version": "1.0.0",
+  "kind": "websocket-service",
+  "transport": { "type": "ws", "url": "ws://127.0.0.1:8765", "protocol": 1 },
+  "handshake": { "type": "hello", "fields": ["client", "protocol"] },
+  "capabilities": [
+    "speech", "viseme-mouth", "expression", "emotion-memory",
+    "idle-motion", "local-llm", "ndi-selfview"
+  ],
+  "messages": {
+    "speech": ["utterance.start", "text.delta", "utterance.end", "cancel"],
+    "emotion": ["feel", "emotion", "action", "mood.get"],
+    "local_model": ["local.chat"],
+    "system": ["status", "ping", "snapshot"]
+  },
+  "requirements": { "os": ["windows"], "vts_api": true, "python": ">=3.11" }
+}
